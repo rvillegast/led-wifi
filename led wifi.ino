@@ -7,7 +7,7 @@
 #include <WebServer.h>
 
 /* Añade tu SSID & Clave para acceder a tu Wifi */
-const char* ssid = "XXXXXXX";  // Tu SSID
+const char* ssid = "XXXXXXX";       // Tu SSID
 const char* password = "XXXXXXXX";  //Tu Clave
 
 /*
@@ -36,16 +36,16 @@ bool LED3Estado = LOW;
    del servidor WEB con Arduino.
 */
 void handle_OnConnect() {
-  LED1Estado = LOW; // 1
-  LED2Estado = LOW; // 1
-  Serial.println("GPIO4 Estado: OFF | GPIO5 Estado: OFF"); // 2
-  server.send(200, "text/html", SendHTML(LED1Estado, LED2Estado)); // 3
+  LED1Estado = LOW;                                                 // 1
+  LED2Estado = LOW;                                                 // 1
+  Serial.println("GPIO4 Estado: OFF | GPIO5 Estado: OFF");          // 2
+  server.send(200, "text/html", SendHTML(LED1Estado, LED2Estado));  // 3
 }
 
 void handle_led1on() {
-  LED1Estado = HIGH; //1
-  Serial.println("GPIO4 Estado: ON"); // 2
-  server.send(200, "text/html", SendHTML(true, LED2Estado)); //3
+  LED1Estado = HIGH;                                          //1
+  Serial.println("GPIO4 Estado: ON");                         // 2
+  server.send(200, "text/html", SendHTML(true, LED2Estado));  //3
 }
 
 void handle_led1off() {
@@ -76,12 +76,12 @@ void handle_NotFound() {
 String SendHTML(uint8_t led1stat, uint8_t led2stat) {
   // Cabecera de todas las paginas WEB
   String ptr = "<!DOCTYPE html> <html>\n";
-  
+
   // <meta> viewport. Para que la pagina se vea correctamente en cualquier dispositivo
   ptr += "<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=no\">\n";
   ptr += "<title>Control LED</title>\n";
-  
-/*
+
+  /*
  * El estilo de la pagina WEB, tipo de letra, tamaño, colores, 
  * El estilos de los botones (las clases en CSS) y la definicion de como van a cambiar dependiendo de como
  * cambien los estado de los LEDs, color fondo etc
@@ -102,26 +102,20 @@ String SendHTML(uint8_t led1stat, uint8_t led2stat) {
    */
   ptr += "<h1>Cuchi Servidor WEB</h1>\n";
   ptr += "<h3>Usando Modo Estacion</h3>\n";
-/*
+  /*
  * Aqui esta la inteligencia del servidor WEB con ESP32, dependiento de los parametros de la funcion SendHTML
  * modificara la vista de la pagina WEB,  llamaran a las clases "button-on y button-off" que cambian como
  * se muestran los datos en la pagina WEB 
  */
-  if (led1stat)
-  {
+  if (led1stat) {
     ptr += "<p>LED1 Estado: ON</p><a class=\"button button-off\" href=\"/led1off\">OFF</a>\n";
-  }
-  else
-  {
+  } else {
     ptr += "<p>LED1 Estado: OFF</p><a class=\"button button-on\" href=\"/led1on\">ON</a>\n";
   }
 
-  if (led2stat)
-  {
+  if (led2stat) {
     ptr += "<p>LED2 Estado: ON</p><a class=\"button button-off\" href=\"/led2off\">OFF</a>\n";
-  }
-  else
-  {
+  } else {
     ptr += "<p>LED2 Estado: OFF</p><a class=\"button button-on\" href=\"/led2on\">ON</a>\n";
   }
 
@@ -139,7 +133,7 @@ void setup() {
   pinMode(LED1pin, OUTPUT);
   pinMode(LED2pin, OUTPUT);
   pinMode(LED3pin, OUTPUT);
-/*
+  /*
  * Configuracion de la conexion a la Wifi de tu casa
  */
   WiFi.mode(WIFI_STA);
@@ -156,7 +150,7 @@ void setup() {
   Serial.println(ssid);
   Serial.print("Direccion IP: ");
   Serial.println(WiFi.localIP());
-/*
+  /*
  * Para procesar las solicitudes HTTP necesitamos definir el codigo que debe de ejecutar en
  * cada estado. Para ello utilizamos el metodo "on" de la libreria WebServer que hemos 
  * habilitador en la linea 13 de este codigo
@@ -165,18 +159,17 @@ void setup() {
  * 3 El ultimo gestiona los errores por ejemplo si pones http://la_ip_del_esp32/holaquetal
  * esta pagina no existe, por lo tanto actualizara la pagina WEB con un mensaje de error
  */
-  server.on("/", handle_OnConnect); // 1
-  server.on("/led1on", handle_led1on); // 2
-  server.on("/led1off", handle_led1off); // 2
-  server.on("/led2on", handle_led2on); // 2
-  server.on("/led2off", handle_led2off); // 2
-  server.onNotFound(handle_NotFound); // 3
-/*
+  server.on("/", handle_OnConnect);       // 1
+  server.on("/led1on", handle_led1on);    // 2
+  server.on("/led1off", handle_led1off);  // 2
+  server.on("/led2on", handle_led2on);    // 2
+  server.on("/led2off", handle_led2off);  // 2
+  server.onNotFound(handle_NotFound);     // 3
+                                          /*
  * Arrancamos el Servicio WEB
  */
   server.begin();
   Serial.println("Servidor HTTP iniciado");
-   
 }
 /*
  * Para gestionar las la peticiones HTTP es necesario llamar al metodo "handleClient"
@@ -188,21 +181,15 @@ void setup() {
 void loop() {
   digitalWrite(LED3pin, HIGH);
   server.handleClient();
-  if (LED1Estado)
-  {
+  if (LED1Estado) {
     digitalWrite(LED1pin, HIGH);
-  }
-  else
-  {
+  } else {
     digitalWrite(LED1pin, LOW);
   }
 
-  if (LED2Estado)
-  {
+  if (LED2Estado) {
     digitalWrite(LED2pin, HIGH);
-  }
-  else
-  {
+  } else {
     digitalWrite(LED2pin, LOW);
   }
 }
